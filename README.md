@@ -5,4 +5,6 @@ Everybody toots!  You are everybody too.  https://joinmastodon.org/
 
 This is functional but alpha.
 
-Here is an example mastodon account using this script:  https://securitymastod.one/@rss2mastodon
+Example:  https://securitymastod.one/@rss2mastodon
+
+![ScreenShot](screenshot.png)

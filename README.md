@@ -1,10 +1,12 @@
 # rss2mastodon
-Convert an XML feed to a new Mastodon status.  
+An example on how to post an XML feed to a Mastodon account.
 
-Everybody toots!  You are everybody too.  https://joinmastodon.org/
+Please reference the comments in index.php for more information.
 
-This is functional but alpha.
-
-Example:  https://securitymastod.one/@rss2mastodon
+Example usage https://securitymastod.one/@rss2mastodon
 
 ![ScreenShot](screenshot.png)
+
+🙇
+
+https://joinmastodon.org/

@@ -1,10 +1,23 @@
 # rss2mastodon
 
-Post an RSS or Atom feed to a Mastodon account.  Uses PHP CLI and composer.  No database or web server required.
+Post an RSS or Atom feed to a [Mastodon](https://github.com/tootsuite/mastodon) account.
 
-Please reference the comments in index.php for more information.
+* Uses [PHP-CLI](http://php.net/manual/en/features.commandline.usage.php).
+* Used [Composer](https://getcomposer.org).
+* No database or web server required.
+* Fast, secure, and easy to maintain.
+
+##Example:
+
+https://mastodon.technology/@rss2mastodon
 
 ![ScreenShot](screenshot.png)
+
+##Notes:
+
+1.  Please reference the comments in _index.php_ for more information.
+2.  Feel free to submit issues and pull requests.
+
 
 🙇
 

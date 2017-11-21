@@ -1,5 +1,6 @@
 # rss2mastodon
-An example on how to post an XML feed to a Mastodon account.
+
+Post an RSS or Atom feed to a Mastodon account.  Uses PHP CLI and composer.  No database or web server required.
 
 Please reference the comments in index.php for more information.
 

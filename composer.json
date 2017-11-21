@@ -1,0 +1,18 @@
+{
+    "name": "the-sillystring/rss2mastodon",
+    "description": "Convert an XML feed to a new Mastodon status.",
+    "keywords": ["rss", "atom", "xml", "mastodon"],
+    "homepage": "https://github.com/the-sillystring/rss2mastodon",
+    "license": ["GNU General Public License v3.0"],
+    "authors": [
+                {
+                "name": "Eric Chadbourne",
+                "homepage": "https://erics.website"
+                }
+                ],
+    "require": {
+        "php": ">=7.1.7",
+        "dg/rss-php": ">=1.2"
+        
+    }
+}

@@ -2,8 +2,7 @@
 
 Post an RSS or Atom feed to a [Mastodon](https://github.com/tootsuite/mastodon) account.
 
-* Uses [PHP-CLI](http://php.net/manual/en/features.commandline.usage.php).
-* Used [Composer](https://getcomposer.org).
+* Uses [PHP-CLI](http://php.net/manual/en/features.commandline.usage.php) and [Composer](https://getcomposer.org).
 * No database or web server required.
 * Fast, secure, and easy to maintain.
 

@@ -47,228 +47,229 @@
     $file_prefix = 'TEST_VALUE_4';
 
     /*
-     Verify submitted key is correct before running script.
-     */
+    Verify submitted key is correct before running script.
+    */
 
     if (empty($argv[1])) {
-        // echo error and die
-        exit('Supply Check User Key' . PHP_EOL);
+      // echo error and die
+      exit('Supply Check User Key' . PHP_EOL);
     } else {
-        // sanatize $argv[1]
-        $check_user_input = strip_tags($argv[1]);
+      // sanatize $argv[1]
+      $check_user_input = strip_tags($argv[1]);
 
-        if ($check_user_key != $check_user_input) {
-            exit('Incorrect Check User Key' . PHP_EOL);
-        }
+      if ($check_user_key != $check_user_input) {
+        exit('Incorrect Check User Key' . PHP_EOL);
+      }
     }
 
     /*
-     Here we will figure out what type of feed to process and call the needed functions.
-     */
+    Here we will figure out what type of feed to process and call the needed functions.
+    */
 
     switch ($feed_type) {
-        case 'ATOM':
-            atom_status_update();
-            break;
+      case 'ATOM':
+      atom_status_update();
+      break;
 
-        case 'RSS':
-            rss_status_update();
-            break;
+      case 'RSS':
+      rss_status_update();
+      break;
 
-        default:
-            exit('Error Switch Feed Type' . PHP_EOL);
+      default:
+      exit('Error Switch Feed Type' . PHP_EOL);
     }
 
     /*
-     This is our main function for reading atom
-     */
+    This is our main function for reading atom
+    */
 
     function atom_status_update()
     {
-        global $url;
-        global $mastodon_hashtags;
-        global $file_prefix;
+      global $url;
+      global $mastodon_hashtags;
+      global $file_prefix;
+      global $item_output;
 
-        $atom = Feed::loadAtom($url);
+      $atom = Feed::loadAtom($url);
 
-        //echo htmlSpecialChars($atom->title);
+      //echo htmlSpecialChars($atom->title);
 
-        foreach ($atom->entry as $entry) {
+      foreach ($atom->entry as $entry) {
 
-            // create file name from title
-            $title_article = $entry->title;
+        // create file name from title
+        $title_article = $entry->title;
 
-            // white list letters and numbers only
-            $title_article_clean = preg_replace("/[^A-Za-z0-9]/",'',$title_article);
-            $title_article_clean = $file_prefix . substr($title_article_clean, 0, "30") . '.txt';
+        // white list letters and numbers only
+        $title_article_clean = preg_replace("/[^A-Za-z0-9]/",'',$title_article);
+        $title_article_clean = $file_prefix . substr($title_article_clean, 0, "30") . '.txt';
 
-            if (!file_exists($title_article_clean)) {
+        if (!file_exists($title_article_clean)) {
 
-                $item_output = NULL;
+          $item_output = NULL;
 
-                $fp_nodb = fopen($title_article_clean, 'w');
+          $fp_nodb = fopen($title_article_clean, 'w');
 
-                $item_output = $title_article;
-                $item_output .= PHP_EOL;
-                $item_output .= htmlSpecialChars($entry->link['href']);
-                $item_output .= PHP_EOL;
-                $item_output .= date("j.n.Y H:i", (int) $entry->timestamp);
-                $item_output .= PHP_EOL;
-                $item_output .= 'QUOTE: '. PHP_EOL;
-                $item_output .= PHP_EOL;
-                $item_output .= trim(substr(strip_tags($entry->content), 0, "200"));
-                $item_output .= '...' . PHP_EOL;
-                $item_output .= PHP_EOL;
-                $item_output .= $mastodon_hashtags;
+          $item_output = $title_article;
+          $item_output .= PHP_EOL;
+          $item_output .= htmlSpecialChars($entry->link['href']);
+          $item_output .= PHP_EOL;
+          $item_output .= date("j.n.Y H:i", (int) $entry->timestamp);
+          $item_output .= PHP_EOL;
+          $item_output .= 'QUOTE: '. PHP_EOL;
+          $item_output .= PHP_EOL;
+          $item_output .= trim(substr(strip_tags($entry->content), 0, "200"));
+          $item_output .= '...' . PHP_EOL;
+          $item_output .= PHP_EOL;
+          $item_output .= $mastodon_hashtags;
 
-                fwrite($fp_nodb, $item_output);
+          fwrite($fp_nodb, $item_output);
 
-                fclose($fp_nodb);
+          fclose($fp_nodb);
 
-                // Post our status update using file
-                mastodon_status_update();
+          // Post our status update using file
+          mastodon_status_update();
 
-                // Clean up old files.  Comment out for rarely updated sites.
-                clean_up_data();
+          // Clean up old files.  Comment out for rarely updated sites.
+          clean_up_data();
 
-            }
         }
+      }
     }
 
     /*
-     This is our main function for reading RSS
-     */
+    This is our main function for reading RSS
+    */
 
     function rss_status_update()
     {
-        global $url;
-        global $mastodon_hashtags;
-        global $file_prefix;
+      global $url;
+      global $mastodon_hashtags;
+      global $file_prefix;
 
-        $rss = Feed::loadRss($url);
+      $rss = Feed::loadRss($url);
 
-        foreach ($rss->item as $entry) {
+      foreach ($rss->item as $entry) {
 
-            // create file name from title
-            $title_article = $entry->title;
+        // create file name from title
+        $title_article = $entry->title;
 
-            // white list letters and numbers only
-            $title_article_clean = preg_replace("/[^A-Za-z0-9]/",'',$title_article);
-            $title_article_clean = $file_prefix . substr($title_article_clean, 0, "30") . '.txt';
+        // white list letters and numbers only
+        $title_article_clean = preg_replace("/[^A-Za-z0-9]/",'',$title_article);
+        $title_article_clean = $file_prefix . substr($title_article_clean, 0, "30") . '.txt';
 
-            if (!file_exists($title_article_clean)) {
+        if (!file_exists($title_article_clean)) {
 
-                $item_output = NULL;
+          $item_output = NULL;
 
-                $fp_nodb = fopen($title_article_clean, 'w');
+          $fp_nodb = fopen($title_article_clean, 'w');
 
-                $item_output = $title_article;
-                $item_output .= PHP_EOL;
-                $item_output .= htmlSpecialChars($entry->link);
-                $item_output .= PHP_EOL;
-                $item_output .= date("j.n.Y H:i", (int) $entry->timestamp);
-                $item_output .= PHP_EOL;
-                $item_output .= 'QUOTE: '. PHP_EOL;
-                $item_output .= PHP_EOL;
-                $item_output .= trim(substr(strip_tags($entry->description), 0, "200"));
-                $item_output .= '...' . PHP_EOL;
-                $item_output .= PHP_EOL;
-                $item_output .= $mastodon_hashtags;
+          $item_output = $title_article;
+          $item_output .= PHP_EOL;
+          $item_output .= htmlSpecialChars($entry->link);
+          $item_output .= PHP_EOL;
+          $item_output .= date("j.n.Y H:i", (int) $entry->timestamp);
+          $item_output .= PHP_EOL;
+          $item_output .= 'QUOTE: '. PHP_EOL;
+          $item_output .= PHP_EOL;
+          $item_output .= trim(substr(strip_tags($entry->description), 0, "200"));
+          $item_output .= '...' . PHP_EOL;
+          $item_output .= PHP_EOL;
+          $item_output .= $mastodon_hashtags;
 
-                fwrite($fp_nodb, $item_output);
+          fwrite($fp_nodb, $item_output);
 
-                fclose($fp_nodb);
+          fclose($fp_nodb);
 
-                // Post our status update using file
-                mastodon_status_update();
+          // Post our status update using file
+          mastodon_status_update();
 
-                // Clean up old files.  Comment out for rarely updated sites.
-                clean_up_data();
+          // Clean up old files.  Comment out for rarely updated sites.
+          clean_up_data();
 
-            }
         }
+      }
     }
 
     /*
-     This is our main function for updating our mastodon status
-     */
+    This is our main function for updating our mastodon status
+    */
 
-     function mastodon_status_update()
-     {
-       global $mastodon_instance;
-       global $mastodon_authcode;
-       global $item_output;
+    function mastodon_status_update()
+    {
+      global $mastodon_instance;
+      global $mastodon_authcode;
+      global $item_output;
 
-         // create a new cURL resource
-         $ch = curl_init();
+      // create a new cURL resource
+      $ch = curl_init();
 
-         // set URL and other appropriate options
-         curl_setopt($ch, CURLOPT_URL, $mastodon_instance);
+      // set URL and other appropriate options
+      curl_setopt($ch, CURLOPT_URL, $mastodon_instance);
 
-         curl_setopt($ch, CURLOPT_HEADER, 1);
+      curl_setopt($ch, CURLOPT_HEADER, 1);
 
-         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $mastodon_authcode) );
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $mastodon_authcode) );
 
-         curl_setopt($ch, CURLOPT_POST, 1);
-         $item_output_mastodon = htmlspecialchars($item_output);
-         curl_setopt($ch, CURLOPT_POSTFIELDS,
-                     "status=$item_output_mastodon");
+      curl_setopt($ch, CURLOPT_POST, 1);
+      $item_output_mastodon = htmlspecialchars($item_output);
+      curl_setopt($ch, CURLOPT_POSTFIELDS,
+      "status=$item_output_mastodon");
 
-         // mastodon returns success or failure html
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-         // Check if any error occurred
-         if(curl_exec($ch) === false) {
-             echo 'Curl error: ' . curl_error($ch);
-         }
+      // mastodon returns success or failure html
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      // Check if any error occurred
+      if(curl_exec($ch) === false) {
+        echo 'Curl error: ' . curl_error($ch);
+      }
 
-         // Check if any error occurred
-         if(curl_errno($ch))
-         {
-             echo 'Curl error: ' . curl_error($ch);
-         }
+      // Check if any error occurred
+      if(curl_errno($ch))
+      {
+        echo 'Curl error: ' . curl_error($ch);
+      }
 
-         // grab URL and pass it to the browser
-         //curl_exec($ch);
+      // grab URL and pass it to the browser
+      //curl_exec($ch);
 
-         // close cURL resource, and free up system resources
-         curl_close($ch);
-     }
+      // close cURL resource, and free up system resources
+      curl_close($ch);
+    }
 
     /*
-     This is our main function for cleaning up old data files.
-     Called by other functions.
-     */
+    This is our main function for cleaning up old data files.
+    Called by other functions.
+    */
 
-     function clean_up_data()
-     {
-         global $file_prefix;
+    function clean_up_data()
+    {
+      global $file_prefix;
 
-         $path = getcwd().'/';
+      $path = getcwd().'/';
 
-         if ($handle = opendir($path)) {
+      if ($handle = opendir($path)) {
 
-             while (false !== ($file = readdir($handle))) {
-                 $filelastmodified = filemtime($path . $file);
-                 //30 days a month * 24 hours in a day * 3600 seconds per hour
-                 if(
-                   (
-                     (time() - $filelastmodified) > 60*24*3600)
-                     AND ($file != '.gitignore')
-                     AND ($file != 'composer.json')
-                     AND ($file != 'composer.lock')
-                     AND ($file != 'index.php')
-                     AND ($file != 'LICENSE')
-                     AND ($file != 'README.md')
-                     AND ($file != 'screenshot.png')
-                   )
-                 {
-                     unlink($path . $file);
-                 }
+        while (false !== ($file = readdir($handle))) {
+          $filelastmodified = filemtime($path . $file);
+          //30 days a month * 24 hours in a day * 3600 seconds per hour
+          if(
+            (
+              (time() - $filelastmodified) > 60*24*3600)
+              AND ($file != '.gitignore')
+              AND ($file != 'composer.json')
+              AND ($file != 'composer.lock')
+              AND ($file != 'index.php')
+              AND ($file != 'LICENSE')
+              AND ($file != 'README.md')
+              AND ($file != 'screenshot.png')
+              )
+              {
+                unlink($path . $file);
+              }
 
-             }
+            }
 
-             closedir($handle);
-         }
-     }
+            closedir($handle);
+          }
+        }
 
 ?>

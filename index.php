@@ -3,38 +3,41 @@
     /*
 
      rss2mastodon - Post an RSS or Atom feed to a Mastodon account.
-     Uses PHP CLI and composer.  No database or web server required.
+     Uses PHP CLI and Composer.  No database or web server required.
 
      Installation:
      0.  In ~/rss2mastodon run "composer install".
      1.  See below which variables to update.
-     1.  Run index.php manually or via cron.
-     2.  Do not expose this directory to the internet or untrusted users.
+     2.  Run index.php manually in terminal or via cron.
+          Example:  php ~/rss2mastodon/index.php check_user_key
+     3.  Do not expose this directory to the internet or untrusted users!
 
      */
 
     // Require composer dependancies.
     require __DIR__ . '/vendor/autoload.php';
 
+    // Change working directory to the same location as this script.
+    chdir(dirname(__FILE__));
+
+    // Verify timezone is set.  macOS issue.
     if (!ini_get('date.timezone')) {
         date_default_timezone_set('America/New_York');
     }
 
-    /*
-     Please read through the various settings below and UPDATE
-     as required.
-     */
+    // Please read through the variables below and UPDATE as required.
 
-    // UPDATE this URL.
+    // UPDATE this URL to the feed you want to follow.
     $url = "https://www.us-cert.gov/ncas/current-activity.xml";
 
-    // UPDATE this URL.
+    // UPDATE this URL to your mastodon instance.
     $mastodon_instance = "https://mastodon.technology/api/v1/statuses";
 
     // UPDATE to ATOM or RSS.
     $feed_type = 'RSS';
 
-    // UPDATE to any random string.
+    // UPDATE to any random string without spaces.
+    // It's merely to stop the script from being accidently run.
     $check_user_key = 'TEST_VALUE_1';
 
     // UPDATE to your instance authorization code.
@@ -44,7 +47,12 @@
     $mastodon_hashtags = '#TEST_VALUE_3';
 
     // UPDATE this value to what you would like the data file named.
+    // This is used to store feed text and keep track of new articles.
     $file_prefix = 'TEST_VALUE_4';
+
+    /*
+    You shouldn't have to modify anything below this row.
+    */
 
     /*
     Verify submitted key is correct before running script.
@@ -126,14 +134,13 @@
 
           fclose($fp_nodb);
 
-          // Post our status update using file
+          // Post our status update using files named $file_prefix
           mastodon_status_update();
-
-          // Clean up old files.  Comment out for rarely updated sites.
-          clean_up_data();
-
         }
       }
+      // Clean up old files.  Comment out for rarely updated sites.
+      // Alternatively you can modify clean up time in the function.
+      clean_up_data();
     }
 
     /*
@@ -180,14 +187,13 @@
 
           fclose($fp_nodb);
 
-          // Post our status update using file
+          // Post our status update using files named $file_prefix
           mastodon_status_update();
-
-          // Clean up old files.  Comment out for rarely updated sites.
-          clean_up_data();
-
         }
       }
+      // Clean up old files.  Comment out for rarely updated sites.
+      // Alternatively you can modify clean up time in the function.
+      clean_up_data();
     }
 
     /*
@@ -229,7 +235,7 @@
       }
 
       // grab URL and pass it to the browser
-      //curl_exec($ch);
+      curl_exec($ch);
 
       // close cURL resource, and free up system resources
       curl_close($ch);
@@ -237,39 +243,25 @@
 
     /*
     This is our main function for cleaning up old data files.
-    Called by other functions.
+    Called by other functions.  Always use last.
     */
 
     function clean_up_data()
     {
+
       global $file_prefix;
+      global $old_files_delete;
 
-      $path = getcwd().'/';
+      foreach (glob($file_prefix."*", GLOB_ERR) as $old_files_delete) {
 
-      if ($handle = opendir($path)) {
+        $filelastmodified = filemtime($old_files_delete);
 
-        while (false !== ($file = readdir($handle))) {
-          $filelastmodified = filemtime($path . $file);
-          //30 days a month * 24 hours in a day * 3600 seconds per hour
-          if(
-            (
-              (time() - $filelastmodified) > 60*24*3600)
-              AND ($file != '.gitignore')
-              AND ($file != 'composer.json')
-              AND ($file != 'composer.lock')
-              AND ($file != 'index.php')
-              AND ($file != 'LICENSE')
-              AND ($file != 'README.md')
-              AND ($file != 'screenshot.png')
-              )
-              {
-                unlink($path . $file);
-              }
-
+        //30 days a month * 24 hours in a day * 3600 seconds per hour
+        if ( (time() - $filelastmodified) > 60*24*3600)
+            {
+              unlink($old_files_delete);
             }
-
-            closedir($handle);
-          }
         }
+      }
 
 ?>

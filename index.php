@@ -17,9 +17,6 @@
     // Require composer dependancies.
     require __DIR__ . '/vendor/autoload.php';
 
-    // Change working directory to the same location as this script.
-    chdir(dirname(__FILE__));
-
     // Verify timezone is set.  macOS issue.
     if (!ini_get('date.timezone')) {
         date_default_timezone_set('America/New_York');
@@ -49,6 +46,11 @@
     // UPDATE this value to what you would like the data file named.
     // This is used to store feed text and keep track of new articles.
     $file_prefix = 'TEST_VALUE_4';
+
+    // UPDATE this to the path you will store your data files in.
+    // chdir(dirname(__FILE__));
+    $working_directory = '/TEST/VALUE/5';
+    chdir($working_directory);
 
     /*
     You shouldn't have to modify anything below this row.

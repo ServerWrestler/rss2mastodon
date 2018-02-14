@@ -10,11 +10,11 @@
      1.  See below which variables to update.
      2.  Run index.php manually in terminal or via cron.
           Example:  php ~/rss2mastodon/index.php check_user_key
-     3.  Do not expose this directory to the internet or untrusted users!
+     3.  Do not expose this directory to the internet.
 
      */
 
-    // Require composer dependancies.
+    // Require composer dependencies.
     require __DIR__ . '/vendor/autoload.php';
 
     // Verify timezone is set.  macOS issue.
@@ -34,7 +34,7 @@
     $r2m_feed_type = 'RSS';
 
     // UPDATE to any random string without spaces.
-    // It's merely to stop the script from being accidently run.
+    // It's merely to stop the script from being accidentally run.
     $r2m_check_user_key = 'TEST_VALUE_1';
 
     // UPDATE to your instance authorization code.

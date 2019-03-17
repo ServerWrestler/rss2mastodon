@@ -10,7 +10,7 @@ Post an RSS or Atom feed to a [Mastodon](https://github.com/tootsuite/mastodon) 
 
 ## Example:
 
-https://mastodon.technology/@rss2mastodon
+https://baller.masto-sport.us/@nba_espn_bot
 
 ![ScreenShot](screenshot.png)
 

@@ -25,31 +25,31 @@
     // Please read through the variables below and UPDATE as required.
 
     // UPDATE this URL to the feed you want to follow.
-    $r2m_url = "https://www.us-cert.gov/ncas/current-activity.xml";
+    $r2m_url = "http://www.espn.com/espn/rss/nba/news";
 
     // UPDATE this URL to your mastodon instance.
-    $r2m_mastodon_instance = "https://mastodon.technology/api/v1/statuses";
+    $r2m_mastodon_instance = "https://baller.masto-sport.us/api/v1/statuses";
 
     // UPDATE to ATOM or RSS.
     $r2m_feed_type = 'RSS';
 
     // UPDATE to any random string without spaces.
     // It's merely to stop the script from being accidentally run.
-    $r2m_check_user_key = 'TEST_VALUE_1';
+    $r2m_check_user_key = 'TEST_NBA';
 
     // UPDATE to your instance authorization code.
-    $r2m_mastodon_authcode = 'TEST_VALUE_2';
+    $r2m_mastodon_authcode = 'your_code_here';
 
     // UPDATE hash tags you want in posts
-    $r2m_mastodon_hashtags = '#TEST_VALUE_3';
+    $r2m_mastodon_hashtags = '#NBATEST';
 
     // UPDATE this value to what you would like the data file named.
     // This is used to store feed text and keep track of new articles.
-    $r2m_file_prefix = 'TEST_VALUE_4';
+    $r2m_file_prefix = 'nba_feed_test';
 
     // UPDATE this to the path you will store your data files in.
     // chdir(dirname(__FILE__));
-    $r2m_working_directory = '/TEST/VALUE/5';
+    $r2m_working_directory = '/home/you/some/path/here';
     chdir($r2m_working_directory);
 
     /*
@@ -154,6 +154,7 @@
       global $r2m_url;
       global $r2m_mastodon_hashtags;
       global $r2m_file_prefix;
+      global $r2m_item_output;
 
       $r2m_rss = Feed::loadRss($r2m_url);
 
@@ -202,39 +203,33 @@
     This is our main function for updating our mastodon status
     */
 
-    function mastodon_status_update()
-    {
+      function mastodon_status_update()
+      {
+
       global $r2m_mastodon_instance;
       global $r2m_mastodon_authcode;
       global $r2m_item_output;
 
-      // create a new cURL resource
-      $r2m_ch = curl_init();
-
-      // set URL and other appropriate options
-      curl_setopt($r2m_ch, CURLOPT_URL, $r2m_mastodon_instance);
-
-      curl_setopt($r2m_ch, CURLOPT_HEADER, 1);
-
-      curl_setopt($r2m_ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $r2m_mastodon_authcode) );
-
-      curl_setopt($r2m_ch, CURLOPT_POST, 1);
-      //white list allowable chars
-      $r2m_item_output_mastodon = preg_replace("/[^A-Za-z0-9\.\:\#\s\/\-\_\+\!\*]/",'',$r2m_item_output);
-      curl_setopt($r2m_ch, CURLOPT_POSTFIELDS,
-      "status=$r2m_item_output_mastodon");
-
-      // mastodon returns success or failure html
-      curl_setopt($r2m_ch, CURLOPT_RETURNTRANSFER, 1);
-      // Check if any error occurred
-      if(curl_exec($r2m_ch) === false) {
-        echo 'Curl error: ' . curl_error($r2m_ch);
+        $headers = [
+          'Authorization: Bearer '.$r2m_mastodon_authcode
+        ];
+        
+        $status_data = array(
+          "status" => "$r2m_item_output",
+          "language" => "eng",
+          "visibility" => "public"
+        );
+        
+        $ch_status = curl_init();
+        curl_setopt($ch_status, CURLOPT_URL, $r2m_mastodon_instance);
+        curl_setopt($ch_status, CURLOPT_POST, 1);
+        curl_setopt($ch_status, CURLOPT_POSTFIELDS, $status_data);
+        curl_setopt($ch_status, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch_status, CURLOPT_HTTPHEADER, $headers);
+        
+        curl_exec($ch_status);
+        curl_close ($ch_status);
       }
-
-      // close cURL resource, and free up system resources
-      curl_close($r2m_ch);
-
-    }
 
     /*
     This is our main function for cleaning up old data files.

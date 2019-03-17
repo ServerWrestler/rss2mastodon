@@ -7,12 +7,12 @@
     "authors": [
                 {
                 "name": "Eric Chadbourne",
-                "homepage": "https://erics.website"
+                "homepage": "https://masto-sport.us/"
                 }
                 ],
     "require": {
-        "php": ">=7.1.7",
-        "dg/rss-php": ">=1.2"
+        "php": ">=7.2",
+        "dg/rss-php": ">=1.3"
         
     }
 }

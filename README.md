@@ -10,8 +10,6 @@ Post an RSS or Atom feed to a [Mastodon](https://github.com/tootsuite/mastodon) 
 
 ## Example:
 
-https://baller.masto-sport.us/@nba_espn_bot
-
 ![ScreenShot](screenshot.png)
 
 ## Notes:
